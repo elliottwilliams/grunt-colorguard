@@ -1,7 +1,7 @@
 {
   "name": "grunt-colorguard",
   "description": "Find and catch color collisions at build time.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "homepage": "https://github.com/elliottwilliams/grunt-colorguard",
   "author": {
     "name": "Elliott Williams",
