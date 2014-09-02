@@ -96,7 +96,7 @@ grunt.initConfig({
 
 Output:
 ```
-3 colors analyzed. No collisons detected.
+3 colors analyzed. No collisions detected.
 ```
 
 ## Contributing
