@@ -57,7 +57,7 @@ module.exports = function(grunt) {
 
       } else {
 
-        message += result.stats.total + ' colors analyzed. No collisons detected.';
+        message += result.stats.total + ' colors analyzed. No collisions detected.';
         grunt.log.ok(message);
       }
 
