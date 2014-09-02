@@ -2,6 +2,8 @@
 
 Scan your application's css files for colors that are too-similar and conflict with each other. This task will output an error to Grunt's log if there are any color conflicts in the css files passed to it.
 
+[![NPM](https://nodei.co/npm/grunt-colorguard.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/grunt-colorguard/)
+
 This plugin uses [css-colorguard](https://github.com/SlexAxton/css-colorguard) from SlexAxton in a Grunt task.
 
 ## Getting Started
