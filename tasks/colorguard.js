@@ -9,6 +9,42 @@
 'use strict';
 
 var colorguard = require('colorguard');
+var path = require('path');
+
+var map = [];
+var _currentMapLine = 0;
+
+function addToMap(filename, contents) {
+  var lines = contents.split('\n').length;
+  var start = _currentMapLine;
+  var end = _currentMapLine += lines;
+
+  var entry = {
+    name: filename,
+    length: lines,
+    start: start,
+    end: end
+  };
+
+  map.push(entry);
+
+  return entry;
+}
+
+function lookupLine(line) {
+  for (var i = 0; i < map.length; i++) {
+    var entry = map[i];
+    if (entry.start <= line && entry.end >= line) {
+      return {
+        name: entry.filename,
+        line: line - entry.start + 1
+      };
+    }
+  }
+
+  // When line wasn't found
+  return false;
+}
 
 module.exports = function(grunt) {
 
@@ -26,6 +62,9 @@ module.exports = function(grunt) {
 
     // Iterate over all specified file groups.
     this.files.forEach(function(f) {
+
+      var map = {};
+
       // Concat specified files.
       var src = f.src.filter(function(filepath) {
         // Warn on and remove invalid source files (if nonull was set).
@@ -37,7 +76,13 @@ module.exports = function(grunt) {
         }
       }).map(function(filepath) {
         // Read file source.
-        return grunt.file.read(filepath);
+        var contents = grunt.file.read(filepath);
+        var name = path.basename(filepath);
+        var lines = contents.split('\n').length;
+
+        addToMap(name, contents);
+
+        return contents;
       }).join('\n');
 
       var result = colorguard.inspect(src, {
@@ -46,9 +91,12 @@ module.exports = function(grunt) {
         whitelist: options.whitelist
       });
 
+      debugger;
+
       var message = '';
 
       if (result.collisions.length > 0) {
+        console.log(result.collisions);
         message += result.collisions.map(function(c) {
           return c.message;
         }).join('\n');
