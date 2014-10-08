@@ -49,6 +49,16 @@ module.exports = function(grunt) {
         },
         src: 'test/fixtures/testing2.css',
         dest: 'tmp/single_file'
+      },
+      multi_collision: {
+        options: {
+        },
+        src: [
+          'test/fixtures/testing.css',
+          'test/fixtures/testing2.css',
+          'test/fixtures/testing3.css'
+        ],
+        dest: 'tmp/multi_collision'
       }
     },
 

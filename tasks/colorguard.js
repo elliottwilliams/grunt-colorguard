@@ -9,6 +9,40 @@
 'use strict';
 
 var colorguard = require('colorguard');
+var path = require('path');
+
+function addToMap(map, filename, contents) {
+  var lines = contents.split('\n').length;
+  var start = (map.length) ? map[map.length-1].end + 1 : 1;
+  var end = start + lines - 1;
+
+  var entry = {
+    name: filename,
+    length: lines,
+    start: start,
+    end: end
+  };
+
+  map.push(entry);
+
+  return entry;
+}
+
+function lookupLine(map, line) {
+  for (var i = 0; i < map.length; i++) {
+    var entry = map[i];
+    if (entry.start <= line && entry.end >= line) {
+      var result = {
+        name: entry.name,
+        line: line - entry.start + 1
+      };
+      return result;
+    }
+  }
+
+  // When line wasn't found
+  return false;
+}
 
 module.exports = function(grunt) {
 
@@ -24,8 +58,12 @@ module.exports = function(grunt) {
       whitelist: [[]]
     });
 
+    // Initalize sourcemap
+    var sourcemap = [];
+
     // Iterate over all specified file groups.
     this.files.forEach(function(f) {
+
       // Concat specified files.
       var src = f.src.filter(function(filepath) {
         // Warn on and remove invalid source files (if nonull was set).
@@ -37,8 +75,22 @@ module.exports = function(grunt) {
         }
       }).map(function(filepath) {
         // Read file source.
-        return grunt.file.read(filepath);
+        var contents = grunt.file.read(filepath);
+        var name = path.basename(filepath);
+
+        var mapEntry = addToMap(sourcemap, name, contents);
+
+        grunt.log.debug('added ' + name + ' (' + mapEntry.length + ' lines) ' +
+          'to sourcemap.\ttotal lines: ' + mapEntry.end);
+
+        grunt.verbose.debug(JSON.stringify(mapEntry, null, '  '));
+
+
+
+        return contents;
       }).join('\n');
+
+      grunt.verbose.debug('Concatenated source file:\n' + src + '\n-----');
 
       var result = colorguard.inspect(src, {
         threshold: options.threshold,
@@ -46,11 +98,38 @@ module.exports = function(grunt) {
         whitelist: options.whitelist
       });
 
+      grunt.verbose.debug('colorguard result:\n' +
+        JSON.stringify(result, null, '  '));
+
       var message = '';
 
+      function mapLineNumber(ln) {
+        var mapped = lookupLine(sourcemap, ln);
+        grunt.log.debug('line ' + ln + ' corresponds to ' + mapped.name +
+          ':' + mapped.line);
+        return mapped.name + ":" + mapped.line;
+      }
+
       if (result.collisions.length > 0) {
-        message += result.collisions.map(function(c) {
-          return c.message;
+        // console.log(result.collisions);
+        message += result.collisions.map(function (collision) {
+
+          // Build representations of both collisions.
+          var a = {
+            hex: collision.colors[0].rgb,
+            mappedLines: collision.colors[0].lines.map(mapLineNumber)
+          };
+
+          var b = {
+            hex: collision.colors[1].rgb,
+            mappedLines: collision.colors[1].lines.map(mapLineNumber)
+          };
+
+          // Construct and return a message.
+          return a.hex + " [" + a.mappedLines.join(', ') +
+            "] is too close (" + collision.distance + ") to " + b.hex +
+            " [" + b.mappedLines.join(', ') + "]";
+
         }).join('\n');
 
         grunt.log.warn(message);

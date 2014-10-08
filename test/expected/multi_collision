@@ -1,0 +1,4 @@
+#010101 [testing.css:2] is too close (0.1574963682909058) to #020202 [testing2.css:2, testing3.css:10]
+#010101 [testing.css:2] is too close (0.31536674629452277) to #030303 [testing3.css:6]
+#020202 [testing2.css:2, testing3.css:10] is too close (0.1578708267004188) to #030303 [testing3.css:6]
+#FACADE [testing3.css:2] is too close (0.3239970889503257) to #FACADD [testing3.css:14]
