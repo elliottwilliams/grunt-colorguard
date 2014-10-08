@@ -53,5 +53,14 @@ exports.colorguard = {
     test.equal(actual, expected, 'should describe what the whitelist behavior is.');
 
     test.done();
+  },
+  multi_collision: function(test) {
+    test.expect(1);
+
+    var actual = grunt.file.read('tmp/multi_collision');
+    var expected = grunt.file.read('test/expected/multi_collision');
+    test.equal(actual, expected, 'should accurately list multiple color collisions.');
+
+    test.done();
   }
 };
