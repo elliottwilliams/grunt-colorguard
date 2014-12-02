@@ -69,9 +69,9 @@ A list of color *combinations* to ignore.
 grunt.initConfig({
   colorguard: {
     options: {},
-    files: {
+    files: [{
       src: ['src/fixtures/testing.css', 'src/fixtures/testing2.css'],
-    },
+    }],
   },
 });
 ```
@@ -89,9 +89,9 @@ grunt.initConfig({
     options: {
       whitelist: [['#010101', '#020202']]
     },
-    files: {
+    files: [{
       src: ['src/fixtures/testing.css', 'src/fixtures/testing2.css'],
-    },
+    }],
   },
 });
 ```
